@@ -12,7 +12,7 @@ namespace WinBitTorrent.Infrastructure.Connection;
 
 public sealed class ConnectionCoordinator : IConnectionCoordinator
 {
-    private const string RequiredQbittorrentVersion = "v5.2.3";
+    private const string RequiredQbittorrentVersion = "v5.2.4";
     private const string RequiredWebApiVersion = "2.15.1";
     private readonly IManagedBackendHost _backendHost;
     private readonly ICredentialStore _credentialStore;
