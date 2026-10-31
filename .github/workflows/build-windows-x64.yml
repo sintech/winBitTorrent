@@ -1,0 +1,49 @@
+name: Build Windows x64
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Portable and installer (x64)
+    runs-on: windows-2022
+    timeout-minutes: 180
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore native engine and Python runtime
+        uses: actions/cache@v4
+        with:
+          path: artifacts/runtime
+          key: windows-2022-x64-runtime-${{ hashFiles('build/build-runtime.ps1', 'build/build-engine.ps1', 'build/architecture.ps1', 'build/runtime/**', 'native/WinBitTorrent.Native/**') }}
+
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup --yes --no-progress
+          if ($LASTEXITCODE -ne 0) { throw 'Inno Setup installation failed.' }
+
+      - name: Build portable ZIP and installer
+        run: ./build/release.ps1 -Platform x64 -Zip -OpenOutput:$false
+
+      - name: Upload Windows x64 packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: WinBitTorrent-windows-x64
+          path: |
+            dist/*-portable.zip
+            dist/*-installer/*-setup.exe
+          if-no-files-found: error
+          retention-days: 14

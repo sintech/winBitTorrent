@@ -1,5 +1,17 @@
 # Build tooling
 
+## GitHub Actions: Windows x64
+
+The `Build Windows x64` workflow (`.github/workflows/build-windows-x64.yml`)
+builds the portable ZIP and Inno Setup installer using `release.ps1`.
+Commit and push the workflow to the fork's default branch, enable Actions in
+the fork if prompted, then open **Actions > Build Windows x64 > Run workflow**
+and select the branch to build. Download `WinBitTorrent-windows-x64` from the
+completed run's **Artifacts** section. No repository secrets are required.
+
+The first run builds the native dependencies; subsequent runs reuse a cache
+when the native sources and runtime build scripts have not changed.
+
 ## Release builder — portable + installer in one action
 
 Interactive launches offer a target menu: **1** builds x64 portable + installer,
